@@ -1,4 +1,4 @@
-vim-py-coverage integrates with Ned Batchelder's code coverage tool for Python
+py-coverage integrates with Ned Batchelder's code coverage tool for Python
 (http://nedbatchelder.com/code/coverage/). After coverage data has been
 gathered, this plugin can be used to retrieve the results and present them in
 the relevant buffers.
