@@ -1,0 +1,60 @@
+*py-coverage.txt*       For Vim version 7.3       Last change: 2012 October 25
+
+py-coverage
+
+==============================================================================
+1. About                                                         *py-coverage*
+
+This plugin integrates with Ned Batchelder's code coverage tool for Python
+(http://nedbatchelder.com/code/coverage/). After coverage data has been
+gathered, this plugin can be used to retrieve the results and present them in
+the relevant buffers.
+
+Source lines lacking coverage ("missing") may be indicated by directly
+highlighting the lines or by populating the quickfix or location lists. The
+function that retrieves the line numbers is also provided for low-level
+access.
+
+
+==============================================================================
+2. Commands
+
+These commands all operate on the current buffer. Excepting
+|:PyCoverageClear|, they will all call |PyCoverageMissedLines| for the current
+buffer and process the line numbers as appropriate.
+
+:PyCoverageHighlight                                    *:PyCoverageHighlight*
+    Uses |matchadd()| to highlight each line in the current buffer that lacks
+    coverage. This uses the PyCoverageMissed highlight group, which is aliased
+    to Error by default.
+
+
+==============================================================================
+3. Functions
+
+PyCoverageMissedLines({buffer})                        *PyCoverageMissedLines*
+    Returns the |List| of line numbers that lack coverage in the given buffer.
+    {buffer} should be a valid argument to |bufname()|; it will usually be ""
+    or "%" for the current buffer.
+
+
+==============================================================================
+4. Configuration
+
+All configuration options have sensible defaults.
+
+g:py_coverage_bin                                          *g:py_coverage_bin*
+    This can be set to the coverage executable. Defaults to "coverage", which
+    we expect to find in your path.
+>
+    let g:py_coverage_bin = '/usr/local/bin/coverage'
+<
+g:py_coverage_dir                                          *g:py_coverage_dir*
+    Set this to the directory that contains the .coverage file with coverage
+    data. If this is unset, we'll search for it up the directory tree from the
+    target file.
+>
+    let g:py_coverage_dir = expand('~/')
+<
+
+ vim:tw=78:ts=4:ft=help:norl:
