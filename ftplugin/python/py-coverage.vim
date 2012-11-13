@@ -2,7 +2,7 @@
 " Python filetype plugin for marking code coverage.
 " Language:     Vim (ft=python)
 " Maintainer:   Peter Sagerson <psagers at ignorare dot net>
-" Version:      0.1.0
+" Version:      0.1.1
 " URL:          https://bitbucket.org/psagers/vim-py-coverage
 "
 
