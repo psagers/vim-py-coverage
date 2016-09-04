@@ -2,7 +2,7 @@
 " Python filetype plugin for marking code coverage.
 " Language:     Vim (ft=python)
 " Maintainer:   Peter Sagerson <psagers at ignorare dot net>
-" Version:      0.1.1
+" Version:      0.1.2
 " URL:          https://bitbucket.org/psagers/vim-py-coverage
 "
 
@@ -24,8 +24,8 @@ highlight default link PyCoverageMissed Error
 function! s:PyCoverageSetQuickfix()
     let newlist = []
 
-    for line in PyCoverageMissedLines('')
-        call add(newlist, {'bufnr': bufnr(''), 'lnum': line, 'text': 'Line not covered'})
+    for lnum in PyCoverageMissedLines('')
+        call add(newlist, {'bufnr': bufnr(''), 'lnum': lnum, 'text': getline(lnum)})
     endfor
 
     call setqflist(newlist)
@@ -40,8 +40,8 @@ command! PyCoverageSetQuickfix  :call s:PyCoverageSetQuickfix()
 function! s:PyCoverageSetLoclist()
     let newlist = []
 
-    for line in PyCoverageMissedLines('')
-        call add(newlist, {'bufnr': bufnr(''), 'lnum': line, 'text': 'Line not covered'})
+    for lnum in PyCoverageMissedLines('')
+        call add(newlist, {'bufnr': bufnr(''), 'lnum': lnum, 'text': getline(lnum)})
     endfor
 
     call setloclist(winnr(), newlist)
@@ -76,6 +76,23 @@ function! s:PyCoverageClear()
 endfunction
 
 command! PyCoverageClear  :call s:PyCoverageClear()
+
+
+"
+" Delete coverage db
+"
+function! s:PyCoverageRemove()
+    let sourcefile = fnamemodify(bufname(''), ':p')
+    let coverage_dir = s:CoverageDir(sourcefile)
+    if coverage_dir != ''
+        exec printf('cd! %s', fnameescape(coverage_dir))
+        exec printf(':silent !%s erase', g:py_coverage_bin)
+        cd! -
+        call s:PyCoverageClear()
+    endif
+endfunction
+
+command! PyCoverageRemove  :call s:PyCoverageRemove()
 
 
 " Returns an array of line numbers representing all of the lines missed by the
@@ -127,8 +144,28 @@ endfunction
 " --------------------------------------------------
 " python/module/path     169     30    82%   26-28, 64, 73-74, ...
 function! s:CoverageReport(sourcefile)
-    let coverage_dir = ''
     let report = ''
+
+    let coverage_dir = s:CoverageDir(a:sourcefile)
+    if coverage_dir != ''
+        exec printf('cd! %s', fnameescape(coverage_dir))
+
+        let report = system(printf('%s report -m --include=%s', g:py_coverage_bin, shellescape(a:sourcefile)))
+
+        if v:shell_error != 0
+            "echo report
+            let report = ''
+        endif
+
+        cd! -
+    endif
+
+    return report
+endfunction
+
+
+function! s:CoverageDir(sourcefile)
+    let coverage_dir = ''
 
     if exists('g:py_coverage_dir')
         let coverage_dir = g:py_coverage_dir
@@ -143,18 +180,5 @@ function! s:CoverageReport(sourcefile)
         endif
     endif
 
-    if coverage_dir != ''
-        exec printf('cd! %s', fnameescape(coverage_dir))
-
-        let report = system(printf('%s report -m --include=%s', shellescape(g:py_coverage_bin), shellescape(a:sourcefile)))
-
-        if v:shell_error != 0
-            echo report
-            let report = ''
-        endif
-
-        cd! -
-    endif
-
-    return report
+    return coverage_dir
 endfunction

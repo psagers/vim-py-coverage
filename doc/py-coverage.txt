@@ -28,6 +28,7 @@ my local configuration, as an example:
 >
     nnoremap <LocalLeader>mh :PyCoverageHighlight<CR>
     nnoremap <LocalLeader>mc :PyCoverageClear<CR>
+    nnoremap <LocalLeader>mC :PyCoverageRemove<CR>
     nnoremap <LocalLeader>mq :PyCoverageSetQuickfix<CR>
     nnoremap <LocalLeader>ml :PyCoverageSetLoclist<CR>
 
@@ -47,10 +48,10 @@ coverage tool to generate its report.
 ==============================================================================
 3. Commands
 
-These commands all operate on the current buffer. Excepting
-|:PyCoverageClear|, they will all call |PyCoverageMissedLines| for the current
-buffer and process the line numbers as appropriate. If coverage data is not
-found for any reason, all commands will behave as if the file has 100%
+These commands all operate on the current buffer. Excepting |:PyCoverageClear|
+and |:PyCoverageRemove|, they will all call |PyCoverageMissedLines| for the
+current buffer and process the line numbers as appropriate. If coverage data
+is not found for any reason, all commands will behave as if the file has 100%
 coverage (no missed lines). 
 
 
@@ -62,6 +63,10 @@ coverage (no missed lines).
 :PyCoverageClear                                            *:PyCoverageClear*
     Reverses |:PyCoverageHighlight|, removing all matches in the
     PyCoverageMissed group.
+
+:PyCoverageRemove                                          *:PyCoverageRemove*
+    Calls "coverage erase" to remove the .coverage file. Also calls
+    |:PyCoverageClear|.
 
 :PyCoverageSetQuickfix                                *:PyCoverageSetQuickfix*
     Populates the quickfix list with the list of missed lines.
